@@ -84,11 +84,44 @@ public class DishServiceImpl implements DishService {
             throw new DeletionNotAllowedException(MessageConstant.DISH_BE_RELATED_BY_SETMEAL);
         }
         // 删除菜品表中的菜品数据
-        for (Long id : ids) {
-            dishMapper.deleteById(id);
-            // 删除菜品关联的口味数据
-            dishFlavorMapper.deleteByDishId(id);
-        }
+        dishMapper.deleteByIds(ids);
+        // 删除菜品关联的口味数据
+        dishFlavorMapper.deleteByDishIds(ids);
+    }
 
+    /**
+     * 根据id查询菜品及其口味
+     * @param id
+     * @return
+     */
+    @Override
+    public DishVO getByIdWithFlavor(Long id) {
+        Dish dish = dishMapper.getById(id);
+        List<DishFlavor> flavors = dishFlavorMapper.getByDishId(id);
+        DishVO dishVO = new DishVO();
+        BeanUtils.copyProperties(dish, dishVO);
+        dishVO.setFlavors(flavors);
+        return dishVO;
+    }
+
+    /**
+     * 修改菜品及 flavors
+     * @param dishDTO
+     */
+    @Transactional
+    public void updateWithFlavor(DishDTO dishDTO) {
+        // 修改菜品
+        Dish dish = new Dish();
+        BeanUtils.copyProperties(dishDTO, dish);
+        dishMapper.update(dish);
+        // 删除菜品口味
+        dishFlavorMapper.deleteByDishId(dishDTO.getId());
+
+        // 重新插入口味数据
+        List<DishFlavor> flavors = dishDTO.getFlavors();
+        if (flavors != null && !flavors.isEmpty()) {
+            flavors.forEach(flavor -> flavor.setDishId(dishDTO.getId()));
+            dishFlavorMapper.insertBatch(flavors);
+        }
     }
 }
