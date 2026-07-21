@@ -85,4 +85,26 @@ public class DishController {
         dishService.updateWithFlavor(dishDTO);
         return Result.success();
     }
+
+    /**
+     * 修改菜品状态
+     * @param status
+     * @param id
+     */
+    @PostMapping("/status/{status}")
+    @ApiOperation("修改菜品状态")
+    public Result updateStatus(@PathVariable Integer status, @RequestParam Long id){
+        log.info("修改菜品状态：{}, {}", status, id);
+        dishService.updateStatus(status, id);
+        return Result.success();
+    }
+
+
+    @GetMapping("/list")
+    @ApiOperation("根据类型查询菜品")
+    public Result<List<DishVO>> list(@RequestParam(required = false) Integer categoryId){
+        log.info("根据类型查询菜品：{}", categoryId);
+        List<DishVO> dishVOList = dishService.list(categoryId);
+        return Result.success(dishVOList);
+    }
 }
