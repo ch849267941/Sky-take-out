@@ -22,6 +22,10 @@ spring:
       test-while-idle: true
       test-on-borrow: false
       test-on-return: false
+  redis:
+    host: ${sky.redis.host}
+    port: ${sky.redis.port}
+    database: ${sky.redis.database}
 
 mybatis:
   #mapper配置文件
