@@ -64,5 +64,13 @@ public interface DishMapper {
      * @param categoryId
      * @return
      */
-    List<DishVO> list(Integer categoryId);
+    List<DishVO> list(Long categoryId);
+
+    /**
+     * 根据分类id查询分类名称
+     * @param categoryId
+     * @return
+     */
+    @Select("select name from category where id = #{categoryId}")
+    String getCategoryNameById(Long categoryId);
 }

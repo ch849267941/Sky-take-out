@@ -16,12 +16,13 @@ spring:
       min-idle: 5
       max-active: 20
       max-wait: 60000
-      time-between-eviction-runs-millis: 60000
-      min-evictable-idle-time-millis: 300000
+      time-between-eviction-runs-millis: 180000
+      min-evictable-idle-time-millis: 240000
       validation-query: SELECT 1
       test-while-idle: true
       test-on-borrow: false
       test-on-return: false
+      num-tests-per-eviction-run: 20
   redis:
     host: ${sky.redis.host}
     port: ${sky.redis.port}
@@ -51,8 +52,17 @@ sky:
     admin-ttl: 7200000
     # 设置前端传递过来的令牌名称
     admin-token-name: token
+    # 设置jwt签名加密时使用的秘钥
+    user-secret-key: itheima
+    # 设置jwt过期时间
+    user-ttl: 7200000
+    # 设置前端传递过来的令牌名称
+    user-token-name: authentication
   alioss:
     endpoint: ${sky.alioss.endpoint}
     access-key-id: ${sky.alioss.access-key-id}
     access-key-secret: ${sky.alioss.access-key-secret}
     bucket-name: ${sky.alioss.bucket-name}
+  wechat:
+    appid: ${sky.wechat.appid}
+    secret: ${sky.wechat.secret}
