@@ -11,6 +11,7 @@ import com.sky.mapper.ShoppingCartMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.sky.service.ShoppingCartService;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,6 +31,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
      * @param shoppingCartDTO
      */
     @Override
+    @Transactional
     public void addShoppingCart(ShoppingCartDTO shoppingCartDTO) {
         ShoppingCart shoppingCart = ShoppingCart.builder()
                 .userId(BaseContext.getCurrentId())
@@ -85,6 +87,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
      * @param shoppingCartDTO
      */
     @Override
+    @Transactional
     public void sub(ShoppingCartDTO shoppingCartDTO) {
         ShoppingCart shoppingCart = ShoppingCart.builder()
                 .userId(BaseContext.getCurrentId())
