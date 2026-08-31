@@ -19,3 +19,11 @@ sky:
   wechat:
     appid: ${WEIXIN_AppID}
     secret: ${WEIXIN_AppSecret}
+#    开始胡写
+    mchid: abcd
+    mchSerialNo: abcd
+    privateKeyFilePath: abcd
+    apiV3Key: abcd
+    weChatPayCertFilePath: abcd
+    notifyUrl: abcd
+    refundNotifyUrl: abcd
