@@ -1,16 +1,19 @@
 package com.sky.controller.admin;
 
+import com.sky.dto.OrdersCancelDTO;
+import com.sky.dto.OrdersConfirmDTO;
 import com.sky.dto.OrdersPageQueryDTO;
+import com.sky.dto.OrdersRejectionDTO;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.OrderService;
+import com.sky.vo.OrderStatisticsVO;
+import com.sky.vo.OrderVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController("adminOrderController")
 @RequestMapping("/admin/order")
@@ -26,11 +29,100 @@ public class OrderController {
      * @param ordersPageQueryDTO
      * @return
      */
-    /*@GetMapping("/conditionSearch")
-    @ApiOperation("查看历史订单")
+    @GetMapping("/conditionSearch")
+    @ApiOperation("订单搜索")
     public Result<PageResult> conditionSearch(OrdersPageQueryDTO ordersPageQueryDTO) {
         log.info("分页查询历史订单：{}", ordersPageQueryDTO);
         PageResult pageResult = orderService.conditionSearch(ordersPageQueryDTO);
         return Result.success(pageResult);
-    }*/
+    }
+
+    /**
+     * 订单统计
+     * @return
+     */
+    @GetMapping("/statistics")
+    @ApiOperation("订单统计")
+    public Result<OrderStatisticsVO> orderStatistics() {
+        log.info("订单统计");
+        OrderStatisticsVO orderStatisticsVO = orderService.orderStatistics();
+        return Result.success(orderStatisticsVO);
+    }
+
+    /**
+     * 订单详情
+     * @param id
+     * @return
+     */
+    @GetMapping("/details/{id}")
+    @ApiOperation("订单详情")
+    public Result<OrderVO> getOrderDetail(@PathVariable Long id) {
+        log.info("订单详情：{}", id);
+        OrderVO orderVO = orderService.orderDetail(id);
+        return Result.success(orderVO);
+    }
+
+    /**
+     * 订单确认
+     * @param ordersConfirmDTO
+     * @return
+     */
+    @PutMapping("/confirm")
+    @ApiOperation("接单")
+    public Result confirm(@RequestBody OrdersConfirmDTO ordersConfirmDTO) {
+        log.info("接单：{}", ordersConfirmDTO.getId());
+        orderService.orderConfirm(ordersConfirmDTO);
+        return Result.success();
+    }
+
+    /**
+     * 拒单
+     * @param ordersRejectionDTO
+     * @return
+     */
+    @PutMapping("/rejection")
+    @ApiOperation("拒单")
+    public Result rejection(@RequestBody OrdersRejectionDTO ordersRejectionDTO) {
+        log.info("拒单：{}", ordersRejectionDTO.getId());
+        orderService.orderRejection(ordersRejectionDTO);
+        return Result.success();
+    }
+
+    /**
+     * 取消订单
+     * @param ordersCancelDTO
+     * @return
+     */
+    @PutMapping("/cancel")
+    @ApiOperation("取消订单")
+    public Result cancel(@RequestBody OrdersCancelDTO ordersCancelDTO) {
+        log.info("取消订单：{}", ordersCancelDTO.getId());
+        orderService.orderCancel(ordersCancelDTO);
+        return Result.success();
+    }
+
+    /**
+     * 订单送餐
+     * @param id
+     * @return
+     */
+    @PutMapping("/delivery/{id}")
+    @ApiOperation("派送订单")
+    public Result delivery(@PathVariable Long id) {
+        log.info("订单送餐：{}", id);
+        orderService.orderDelivery(id);
+        return Result.success();
+    }
+    /**
+     * 订单完成
+     * @param id
+     * @return
+     */
+    @PutMapping("/complete/{id}")
+    @ApiOperation("完成订单")
+    public Result complete(@PathVariable Long id) {
+        log.info("完成订单：{}", id);
+        orderService.orderComplete(id);
+        return Result.success();
+    }
 }
