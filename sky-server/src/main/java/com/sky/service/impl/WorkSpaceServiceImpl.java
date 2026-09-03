@@ -40,47 +40,42 @@ public class WorkSpaceServiceImpl implements WorkSpaceService {
      * @return
      */
     @Override
-    public BusinessDataVO getBusinessData() {
+    public BusinessDataVO getBusinessData(LocalDateTime beginTime, LocalDateTime endTime) {
 
-        // 获取今日用户注册数
         Map map = new HashMap();
-        LocalDate now = LocalDate.now();
-        LocalDateTime endTime1 = LocalDateTime.of(now, LocalTime.MAX);
-        map.put("endTime", endTime1);
-        int userCount1 = userMapper.countByMap(map);
-        LocalDateTime endTime2 = LocalDateTime.of(now.plusDays(-1), LocalTime.MAX);
-        map.put("endTime", endTime2);
-        int userCount2 = userMapper.countByMap(map);
-
-        // 获取有效订单数,订单完成率
-        LocalDateTime beginTime = LocalDateTime.of(now, LocalTime.MIN);
         map.put("beginTime", beginTime);
-        map.put("endTime", endTime1);
-        int OrderCount = orderMapper.countByMap(map);
-        map.put("status", 5);
-        int validOrderCount = orderMapper.countByMap(map);
+        map.put("endTime", endTime);
 
-        // 设置数据
-        if (validOrderCount == 0){
-            return BusinessDataVO.builder()
-                    .newUsers(userCount1 - userCount2)
-                    .validOrderCount(0)
-                    .orderCompletionRate(0.0)
-                    .unitPrice(0.0)
-                    .turnover(0.0)
-                    .build();
+        //查询总订单数
+        Integer totalOrderCount = orderMapper.countByMap(map);
+
+        //新增用户数
+        Integer newUsers = userMapper.countByMap(map);
+
+        map.put("status", Orders.COMPLETED);
+        //营业额
+        Double turnover = reportMapper.sumByMap(map);
+        turnover = turnover == null? 0.0 : turnover;
+
+        //有效订单数
+        Integer validOrderCount = orderMapper.countByMap(map);
+
+        Double unitPrice = 0.0;
+
+        Double orderCompletionRate = 0.0;
+        if(totalOrderCount != 0 && validOrderCount != 0){
+            //订单完成率
+            orderCompletionRate = validOrderCount.doubleValue() / totalOrderCount;
+            //平均客单价
+            unitPrice = turnover / validOrderCount;
         }
 
-        // 营业额,平均客单价
-        Double turnover = reportMapper.sumByMap(map);
-        turnover = turnover == null ? 0.0 : turnover;
-
         return BusinessDataVO.builder()
-                .newUsers(userCount1 - userCount2)
-                .validOrderCount(validOrderCount)
-                .orderCompletionRate((double) validOrderCount / OrderCount)
-                .unitPrice(turnover / validOrderCount)
                 .turnover(turnover)
+                .validOrderCount(validOrderCount)
+                .orderCompletionRate(orderCompletionRate)
+                .unitPrice(unitPrice)
+                .newUsers(newUsers)
                 .build();
     }
 
