@@ -5,6 +5,8 @@ import com.sky.entity.Orders;
 import com.sky.mapper.OrderMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -49,5 +51,19 @@ public class OrderTask {
                 orderMapper.update(orders);
             }
         }
+    }
+
+    /**
+     * 定时清空统计缓存数据
+     */
+    @Scheduled(cron = "0 0 0 * * ?")
+    @Caching(evict = {
+            @CacheEvict(value = "turnoverStatisticsCache", allEntries = true),
+            @CacheEvict(value = "userStatisticsCache", allEntries = true),
+            @CacheEvict(value = "ordersStatisticsCache", allEntries = true),
+            @CacheEvict(value = "top10Cache", allEntries = true)
+    })
+    public void evictCache() {
+        log.info("清空统计缓存数据");
     }
 }

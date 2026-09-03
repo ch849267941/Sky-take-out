@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.sky.utils.HttpClientUtil;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,6 +50,7 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             user = User.builder()
                     .openid(openid)
+                    .createTime(LocalDateTime.now())
                     .build();
             userMapper.insert(user);
         }
